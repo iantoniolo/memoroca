@@ -75,9 +75,22 @@ function saveDeck(deck) {
 }
 
 function buildDeckForDifficulty(deck, difficulty) {
-  const baseGrid = (deck.gridByDifficulty && deck.gridByDifficulty[difficulty])
-    ? deck.gridByDifficulty[difficulty]
-    : DEFAULT_DECK.gridByDifficulty?.[difficulty] || DEFAULT_DECK.gridByDifficulty.easy;
+  const isMobile = window.innerWidth <= 768;
+  
+  let baseGrid;
+  if (isMobile) {
+    const mobileGrid = {
+      easy: { cols: 6, rows: 4 },
+      medium: { cols: 6, rows: 5 },
+      hard: { cols: 6, rows: 6 }
+    };
+    baseGrid = mobileGrid[difficulty] || mobileGrid.easy;
+  } else {
+    baseGrid = (deck.gridByDifficulty && deck.gridByDifficulty[difficulty])
+      ? deck.gridByDifficulty[difficulty]
+      : DEFAULT_DECK.gridByDifficulty?.[difficulty] || DEFAULT_DECK.gridByDifficulty.easy;
+  }
+  
   const cols = Number(baseGrid?.cols);
   const rows = Number(baseGrid?.rows);
   const totalCards = Number.isFinite(cols * rows) && cols > 0 && rows > 0 ? cols * rows : 12;
@@ -162,7 +175,12 @@ function initBoard(deck, difficulty) {
   cards.forEach(card => newBoard.appendChild(createCardElement(card, backImage)));
   setGrid(newBoard, grid);
 
-  const onResize = () => setGrid(newBoard, grid);
+  const onResize = () => {
+    // Recalcula o grid baseado no novo tamanho da tela
+    const { grid: newGrid } = buildDeckForDifficulty(deck, difficulty);
+    setGrid(newBoard, newGrid);
+  };
+  
   window.addEventListener('resize', onResize, { passive: true });
   newBoard.addEventListener('DOMNodeRemoved', (e) => {
     if (e.target === newBoard) window.removeEventListener('resize', onResize);
