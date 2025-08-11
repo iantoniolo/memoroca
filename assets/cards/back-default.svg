@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="560" viewBox="0 0 400 560">
+  <defs>
+    <!-- Paleta pastel -->
+    <linearGradient id="vignette" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#FFF9F3"/>
+      <stop offset="100%" stop-color="#FFF4EA"/>
+    </linearGradient>
+    <radialGradient id="innerGlow" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="polka" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="11" cy="11" r="2.6" fill="#ffffff" opacity="0.35"/>
+    </pattern>
+  </defs>
+
+  <!-- Moldura externa suave -->
+  <rect x="0" y="0" width="400" height="560" rx="24" fill="#fff"/>
+  <!-- Cartão interno em pêssego pastel mais vivo com borda sutil -->
+  <rect x="14" y="14" width="372" height="532" rx="20" fill="#F5B183" stroke="#EFA46F" stroke-width="2"/>
+  <!-- Textura de poás discretos -->
+  <rect x="14" y="14" width="372" height="532" rx="20" fill="url(#polka)"/>
+  <!-- Brilho central suave para profundidade -->
+  <rect x="14" y="14" width="372" height="532" rx="20" fill="url(#innerGlow)"/>
+  <!-- Vinheta muito leve -->
+  <rect x="14" y="14" width="372" height="532" rx="20" fill="url(#vignette)" fill-opacity="0.25"/>
+</svg>
+
+

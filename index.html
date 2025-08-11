@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Memoroca</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="modulepreload" href="./app.js" />
+    <link rel="icon" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <h1 class="brand">Memoroca</h1>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="controls" aria-label="Controles do jogo">
+        <div class="deck-selector" role="group" aria-label="Seleção de baralho">
+          <button class="chip chip-deck is-selected" data-deck="default" aria-pressed="true">Baralho padrão</button>
+          <button class="chip chip-deck" data-deck="custom" aria-pressed="false">Baralho personalizado</button>
+        </div>
+
+        <div class="difficulty-selector" role="group" aria-label="Seleção de dificuldade">
+          <button class="chip chip-easy is-selected" data-difficulty="easy" aria-pressed="true">Fácil</button>
+          <button class="chip chip-medium" data-difficulty="medium" aria-pressed="false">Médio</button>
+          <button class="chip chip-hard" data-difficulty="hard" aria-pressed="false">Difícil</button>
+        </div>
+
+        <div class="right-actions">
+          <button class="btn btn-icon" id="btn-new-game" aria-label="Novo jogo" title="Novo jogo">
+            <span class="icon" aria-hidden="true">↻</span>
+            <span class="sr-only">Novo jogo</span>
+          </button>
+          <button class="btn btn-secondary btn-icon" id="btn-open-config" aria-label="Configurar baralho" title="Configurar baralho">
+            <span class="icon" aria-hidden="true">⚙</span>
+            <span class="sr-only">Configurar baralho</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="statusbar" aria-live="polite">
+        <div id="status-text">Selecione cartas para começar.</div>
+      </section>
+
+      <section class="board" role="grid" aria-label="Tabuleiro"></section>
+    </main>
+
+    <dialog id="config-dialog" class="config-dialog">
+      <form method="dialog" class="config-content">
+        <header>
+          <h2>Configurar baralho</h2>
+        </header>
+
+        <div class="config-grid">
+          <div class="config-item">
+            <label for="file-fronts" class="config-label">Imagens das cartas (frente)</label>
+            <input id="file-fronts" type="file" accept="image/*" multiple />
+            <p class="hint">Selecione várias imagens. Usaremos pares dessas imagens.</p>
+          </div>
+
+          <div class="config-item">
+            <label for="file-back" class="config-label">Imagem do verso</label>
+            <input id="file-back" type="file" accept="image/*" />
+            <p class="hint">Opcional. Se não enviar, usamos o padrão.</p>
+          </div>
+
+          
+        </div>
+
+        <footer class="dialog-footer">
+          <div style="display:flex; gap:8px; width:100%; justify-content: flex-end;">
+            <button class="btn btn-secondary" value="close">Fechar</button>
+            <button type="button" class="btn" id="btn-save-deck">Salvar baralho</button>
+          </div>
+        </footer>
+      </form>
+    </dialog>
+
+    <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <footer class="site-footer">
+      <div class="container small">
+        <span>Copyright © 2025 by Gerontóloga Karen Jardim. All rights reserved.</span>
+      </div>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+  </html>
+
+
