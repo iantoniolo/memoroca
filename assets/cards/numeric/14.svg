@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="560" viewBox="0 0 400 560">
   <rect width="400" height="560" rx="24" fill="#fff"/>
-  <rect x="16" y="16" width="368" height="528" rx="20" fill="#F28C38"/>
+  <rect x="16" y="16" width="368" height="528" rx="20" fill="#FCE7A9"/>
   <text x="200" y="300" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto" font-size="110" fill="#2b1200" font-weight="700">14</text>
 </svg>
 

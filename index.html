@@ -15,38 +15,33 @@
     <header class="site-header">
       <div class="container">
         <h1 class="brand">Memoroca</h1>
+        <section class="controls" aria-label="Controles do jogo">
+          <div class="deck-selector" role="group" aria-label="Seleção de baralho">
+            <button class="chip chip-deck is-selected" data-deck="default" aria-pressed="true">Baralho padrão</button>
+            <button class="chip chip-deck" data-deck="custom" aria-pressed="false">Baralho personalizado</button>
+          </div>
+
+          <div class="difficulty-selector" role="group" aria-label="Seleção de dificuldade">
+            <button class="chip chip-easy is-selected" data-difficulty="easy" aria-pressed="true">Fácil</button>
+            <button class="chip chip-medium" data-difficulty="medium" aria-pressed="false">Médio</button>
+            <button class="chip chip-hard" data-difficulty="hard" aria-pressed="false">Difícil</button>
+          </div>
+
+          <div class="right-actions">
+            <button class="btn btn-icon" id="btn-new-game" aria-label="Novo jogo" title="Novo jogo">
+              <span class="icon" aria-hidden="true">↻</span>
+              <span class="sr-only">Novo jogo</span>
+            </button>
+            <button class="btn btn-secondary btn-icon" id="btn-open-config" aria-label="Configurar baralho" title="Configurar baralho">
+              <span class="icon" aria-hidden="true">⚙</span>
+              <span class="sr-only">Configurar baralho</span>
+            </button>
+          </div>
+        </section>
       </div>
     </header>
 
     <main class="container">
-      <section class="controls" aria-label="Controles do jogo">
-        <div class="deck-selector" role="group" aria-label="Seleção de baralho">
-          <button class="chip chip-deck is-selected" data-deck="default" aria-pressed="true">Baralho padrão</button>
-          <button class="chip chip-deck" data-deck="custom" aria-pressed="false">Baralho personalizado</button>
-        </div>
-
-        <div class="difficulty-selector" role="group" aria-label="Seleção de dificuldade">
-          <button class="chip chip-easy is-selected" data-difficulty="easy" aria-pressed="true">Fácil</button>
-          <button class="chip chip-medium" data-difficulty="medium" aria-pressed="false">Médio</button>
-          <button class="chip chip-hard" data-difficulty="hard" aria-pressed="false">Difícil</button>
-        </div>
-
-        <div class="right-actions">
-          <button class="btn btn-icon" id="btn-new-game" aria-label="Novo jogo" title="Novo jogo">
-            <span class="icon" aria-hidden="true">↻</span>
-            <span class="sr-only">Novo jogo</span>
-          </button>
-          <button class="btn btn-secondary btn-icon" id="btn-open-config" aria-label="Configurar baralho" title="Configurar baralho">
-            <span class="icon" aria-hidden="true">⚙</span>
-            <span class="sr-only">Configurar baralho</span>
-          </button>
-        </div>
-      </section>
-
-      <section class="statusbar" aria-live="polite">
-        <div id="status-text">Selecione cartas para começar.</div>
-      </section>
-
       <section class="board" role="grid" aria-label="Tabuleiro"></section>
     </main>
 

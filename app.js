@@ -7,26 +7,40 @@ const DEFAULT_DECK = {
     hard: { cols: 8, rows: 4 }
   },
   cards: [
-    { id: '1', image: './assets/cards/1.svg', label: 'Figura 1' },
-    { id: '2', image: './assets/cards/2.svg', label: 'Figura 2' },
-    { id: '3', image: './assets/cards/3.svg', label: 'Figura 3' },
-    { id: '4', image: './assets/cards/4.svg', label: 'Figura 4' },
-    { id: '5', image: './assets/cards/5.svg', label: 'Figura 5' },
-    { id: '6', image: './assets/cards/6.svg', label: 'Figura 6' },
-    { id: '7', image: './assets/cards/7.svg', label: 'Figura 7' },
-    { id: '8', image: './assets/cards/8.svg', label: 'Figura 8' },
-    { id: '9', image: './assets/cards/9.svg', label: 'Figura 9' },
-    { id: '10', image: './assets/cards/10.svg', label: 'Figura 10' },
-    { id: '11', image: './assets/cards/11.svg', label: 'Figura 11' },
-    { id: '12', image: './assets/cards/12.svg', label: 'Figura 12' },
-    { id: '13', image: './assets/cards/13.svg', label: 'Figura 13' }
+    { id: '1', image: './assets/cards/numeric/1.svg', label: 'Figura 1' },
+    { id: '2', image: './assets/cards/numeric/2.svg', label: 'Figura 2' },
+    { id: '3', image: './assets/cards/numeric/3.svg', label: 'Figura 3' },
+    { id: '4', image: './assets/cards/numeric/4.svg', label: 'Figura 4' },
+    { id: '5', image: './assets/cards/numeric/5.svg', label: 'Figura 5' },
+    { id: '6', image: './assets/cards/numeric/6.svg', label: 'Figura 6' },
+    { id: '7', image: './assets/cards/numeric/7.svg', label: 'Figura 7' },
+    { id: '8', image: './assets/cards/numeric/8.svg', label: 'Figura 8' },
+    { id: '9', image: './assets/cards/numeric/9.svg', label: 'Figura 9' },
+    { id: '10', image: './assets/cards/numeric/10.svg', label: 'Figura 10' },
+    { id: '11', image: './assets/cards/numeric/11.svg', label: 'Figura 11' },
+    { id: '12', image: './assets/cards/numeric/12.svg', label: 'Figura 12' },
+    { id: '13', image: './assets/cards/numeric/13.svg', label: 'Figura 13' }
   ]
 };
 
-const STORAGE_KEY = 'memory-game-deck-v1';
-
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+async function loadCustomPresetDeck() {
+  try {
+    const resp = await fetch('./assets/cards/images/manifest.json', { cache: 'no-store' });
+    const list = await resp.json();
+    const files = Array.isArray(list) ? list : [];
+    const cards = files.map((file, idx) => ({
+      id: `u-${idx + 1}`,
+      image: `./assets/cards/images/${file}`,
+      label: file?.split('/').pop() || `Carta ${idx + 1}`
+    }));
+    return { title: 'Personalizado', backImage: DEFAULT_DECK.backImage, cards };
+  } catch (_) {
+    return { title: 'Personalizado', backImage: DEFAULT_DECK.backImage, cards: [] };
+  }
+}
 
 function showToast(message, type = 'info', timeoutMs = 2500) {
   const container = document.getElementById('toast-container');
@@ -53,26 +67,7 @@ function shuffle(array) {
   return array;
 }
 
-function getSavedDeck() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    const hasCards = Array.isArray(parsed.cards) && parsed.cards.length > 0;
-    if (!hasCards) return null;
-    return {
-      ...parsed,
-      backImage: typeof parsed.backImage === 'string' && parsed.backImage ? parsed.backImage : DEFAULT_DECK.backImage,
-      gridByDifficulty: DEFAULT_DECK.gridByDifficulty
-    };
-  } catch (_) {
-    return null;
-  }
-}
-
-function saveDeck(deck) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
-}
+// Persistência removida: baralho personalizado volta ao preset em cada recarregamento
 
 function buildDeckForDifficulty(deck, difficulty) {
   const isMobile = window.innerWidth <= 768;
@@ -114,7 +109,8 @@ function setGrid(board, grid) {
   board.style.gridTemplateColumns = `repeat(${grid.cols}, minmax(0, 1fr))`;
   const rows = grid.rows;
   const dynamicGap = rows >= 7 ? 6 : rows === 6 ? 8 : rows === 5 ? 10 : 12;
-  board.style.gap = `${dynamicGap}px`;
+  board.style.setProperty('--board-gap', `${dynamicGap + 2}px`);
+  board.style.gap = `var(--board-gap)`;
   requestAnimationFrame(() => {
     const gap = parseFloat(getComputedStyle(board).gap) || dynamicGap;
     const cols = grid.cols;
@@ -123,18 +119,21 @@ function setGrid(board, grid) {
     const vh = window.innerHeight;
 
     const headerH = document.querySelector('.site-header')?.offsetHeight || 0;
-    const controlsH = document.querySelector('.controls')?.offsetHeight || 0;
-    const statusH = document.querySelector('.statusbar')?.offsetHeight || 0;
+    const controlsH = 0;
+    const statusH = 0;
     const footerH = document.querySelector('.site-footer')?.offsetHeight || 0;
     // Reserva vertical: garante footer visível
-    const overhead = Math.max(6, (document.querySelector('.site-footer')?.offsetHeight || 0) + 6);
-    const verticalAvailable = Math.max(vh - headerH - controlsH - statusH - footerH - overhead, 200);
+    const overhead = Math.max(6, footerH + 6);
+    const verticalAvailable = Math.max(vh - headerH - controlsH - statusH - footerH - overhead, 180);
 
-    const cardW = Math.floor((vw - (cols - 1) * gap - 32) / cols);
+    const pagePadding = 24;
+    const cardW = Math.floor((vw - (cols - 1) * gap - pagePadding) / cols);
     const cardH = Math.floor((verticalAvailable - (rows - 1) * gap) / rows);
 
     const aspectW = Math.floor(cardH * (14 / 17));
-    const finalW = Math.min(cardW, aspectW);
+    const baseW = Math.min(cardW, aspectW);
+    const canUpscale = vw >= 1024 ? 1.08 : vw >= 768 ? 1.04 : 1.0;
+    const finalW = Math.min(cardW, Math.floor(baseW * canUpscale));
     const finalH = Math.floor(finalW * (17 / 14));
 
     board.style.setProperty('--card-w', `${finalW}px`);
@@ -163,7 +162,11 @@ function createCardElement(card, backImage) {
   return el;
 }
 
-function renderStatus(text) { $('#status-text').textContent = text; }
+function renderStatus(text) {
+  const el = $('#status-text');
+  if (!el) return;
+  el.textContent = text;
+}
 
 function initBoard(deck, difficulty) {
   const oldBoard = document.querySelector('.board');
@@ -248,7 +251,6 @@ function initBoard(deck, difficulty) {
     }
   });
 
-  renderStatus('Selecione cartas para começar.');
 }
 
 function applyDifficultySelection(currentDifficulty) {
@@ -259,8 +261,10 @@ function applyDifficultySelection(currentDifficulty) {
   });
 }
 
-function setupUI() {
-  let deck = getSavedDeck() || DEFAULT_DECK;
+async function setupUI() {
+  let currentMode = 'default';
+  let sessionCustomDeck = await loadCustomPresetDeck();
+  let deck = DEFAULT_DECK;
   let difficulty = 'easy';
   applyDifficultySelection(difficulty);
   initBoard(deck, difficulty);
@@ -281,7 +285,7 @@ function setupUI() {
     console.warn('btn-new-game não encontrado');
   }
 
-  $('.deck-selector').addEventListener('click', (e) => {
+  $('.deck-selector').addEventListener('click', async (e) => {
     const b = e.target.closest('.chip-deck');
     if (!b) return;
     const mode = b.dataset.deck;
@@ -291,12 +295,17 @@ function setupUI() {
       btn.setAttribute('aria-pressed', String(is));
     });
     if (mode === 'default') {
+      currentMode = 'default';
       deck = DEFAULT_DECK;
     } else {
-      deck = getSavedDeck() || DEFAULT_DECK;
-      if (!getSavedDeck()) {
-        $('#config-dialog').showModal();
+      currentMode = 'custom';
+      if (!sessionCustomDeck || !Array.isArray(sessionCustomDeck.cards)) {
+        sessionCustomDeck = await loadCustomPresetDeck();
       }
+      if (!(sessionCustomDeck.cards?.length > 0)) {
+        showToast('Nenhuma imagem padrão encontrada em assets/cards/default. Use o botão de configurações para enviar imagens.', 'info');
+      }
+      deck = (sessionCustomDeck.cards?.length > 0) ? sessionCustomDeck : DEFAULT_DECK;
     }
     initBoard(deck, difficulty);
   });
@@ -307,8 +316,7 @@ function setupUI() {
     openCfg.addEventListener('click', () => dialog.showModal());
   }
 
-  // Removido botão "Usar baralho padrão" do diálogo (já existe no menu principal)
-
+  // Alterações do baralho personalizado são por sessão (não persistem após reload)
   const saveDeckBtn = $('#btn-save-deck');
   if (saveDeckBtn) saveDeckBtn.addEventListener('click', async () => {
     const frontsFiles = Array.from($('#file-fronts').files || []);
@@ -320,12 +328,12 @@ function setupUI() {
       reader.readAsDataURL(file);
     });
 
-    let newCards = deck.cards;
+    let newCards = sessionCustomDeck.cards || [];
     if (frontsFiles.length > 0) {
       const images = await Promise.all(frontsFiles.map(f => toDataURL(f)));
       newCards = images.map((src, idx) => ({ id: `u-${idx+1}`, image: src, label: `Carta ${idx+1}` }));
     }
-    const newBack = backFile ? await toDataURL(backFile) : deck.backImage;
+    const newBack = backFile ? await toDataURL(backFile) : (sessionCustomDeck.backImage || DEFAULT_DECK.backImage);
 
     const onlyBackChanged = frontsFiles.length === 0 && !!backFile;
     const nothingChanged = frontsFiles.length === 0 && !backFile;
@@ -335,15 +343,23 @@ function setupUI() {
       return;
     }
 
-    deck = {
-      ...deck,
+    sessionCustomDeck = {
       title: 'Personalizado',
       backImage: newBack,
+      gridByDifficulty: DEFAULT_DECK.gridByDifficulty,
       cards: newCards
     };
-    saveDeck(deck);
-    initBoard(deck, difficulty);
-    showToast(onlyBackChanged ? 'Verso atualizado com sucesso.' : 'Baralho salvo neste navegador.', 'success');
+
+    if (currentMode === 'custom') {
+      deck = sessionCustomDeck;
+      initBoard(deck, difficulty);
+    }
+
+    // Fecha o diálogo após salvar com sucesso
+    const dialogEl = document.getElementById('config-dialog');
+    if (dialogEl && typeof dialogEl.close === 'function') dialogEl.close();
+
+    showToast(onlyBackChanged ? 'Verso atualizado com sucesso.' : 'Baralho personalizado atualizado (sessão).', 'success');
   });
 }
 
