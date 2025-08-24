@@ -134,6 +134,10 @@ body {
   border-color: rgba(112, 193, 131, 0.8);
 }
 
+.board.custom-deck .card-face.front {
+  border: none;
+}
+
 @keyframes pulse {
   0% { transform: rotateY(180deg) scale(1); }
   50% { transform: rotateY(180deg) scale(1.05); }

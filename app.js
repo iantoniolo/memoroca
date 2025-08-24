@@ -168,10 +168,12 @@ function renderStatus(text) {
   el.textContent = text;
 }
 
-function initBoard(deck, difficulty) {
+function initBoard(deck, difficulty, isCustomDeck = false) {
   const oldBoard = document.querySelector('.board');
   const newBoard = oldBoard.cloneNode(false);
   oldBoard.replaceWith(newBoard);
+  
+  newBoard.classList.toggle('custom-deck', isCustomDeck);
 
   const { cards, grid, backImage } = buildDeckForDifficulty(deck, difficulty);
   setGrid(newBoard, grid);
@@ -267,19 +269,19 @@ async function setupUI() {
   let deck = DEFAULT_DECK;
   let difficulty = 'easy';
   applyDifficultySelection(difficulty);
-  initBoard(deck, difficulty);
+  initBoard(deck, difficulty, currentMode === 'custom');
 
   $('.difficulty-selector').addEventListener('click', (e) => {
     const b = e.target.closest('.chip');
     if (!b) return;
     difficulty = b.dataset.difficulty;
     applyDifficultySelection(difficulty);
-    initBoard(deck, difficulty);
+    initBoard(deck, difficulty, currentMode === 'custom');
   });
 
   const newGameBtn = $('#btn-new-game');
   if (newGameBtn) {
-    newGameBtn.addEventListener('click', () => initBoard(deck, difficulty));
+    newGameBtn.addEventListener('click', () => initBoard(deck, difficulty, currentMode === 'custom'));
     newGameBtn.disabled = true;
   } else {
     console.warn('btn-new-game não encontrado');
@@ -307,7 +309,7 @@ async function setupUI() {
       }
       deck = (sessionCustomDeck.cards?.length > 0) ? sessionCustomDeck : DEFAULT_DECK;
     }
-    initBoard(deck, difficulty);
+    initBoard(deck, difficulty, currentMode === 'custom');
   });
 
   const dialog = $('#config-dialog');
@@ -352,7 +354,7 @@ async function setupUI() {
 
     if (currentMode === 'custom') {
       deck = sessionCustomDeck;
-      initBoard(deck, difficulty);
+      initBoard(deck, difficulty, currentMode === 'custom');
     }
 
     // Fecha o diálogo após salvar com sucesso
